@@ -1,6 +1,11 @@
 var overrides = localStorage;
 var disabled;
 
+// https://developer.mozilla.org/en/docs/Web/API/WindowBase64/btoa
+function utf8_to_b64(str) {
+  return window.btoa(unescape(encodeURIComponent(str)));
+}
+
 chrome.runtime.onConnect.addListener(function(dev_tools_connection) {
   var listener = function(message) {
     if (message.method === 'register') {
@@ -32,7 +37,7 @@ chrome.webRequest.onBeforeRequest.addListener(function(details) {
   if (detail_json) {
     var detail = JSON.parse(detail_json);
     return {
-      redirectUrl: 'data:' + detail.mime + ';base64,' + btoa(detail.code)
+      redirectUrl: 'data:' + detail.mime + ';base64,' + utf8_to_b64(detail.code)
     };
   }
 }, {
